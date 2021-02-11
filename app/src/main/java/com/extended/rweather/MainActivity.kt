@@ -1,15 +1,11 @@
 package com.extended.rweather
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.res.Resources
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.extended.rweather.models.one_call.OneCallModel
 import com.extended.rweather.models.one_call.Weather
 import com.extended.rweather.support.Common
@@ -17,19 +13,16 @@ import com.extended.rweather.support.RetrofitServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.http.GET
-import retrofit2.http.Path
 
 class MainActivity : AppCompatActivity() {
-    lateinit var service: RetrofitServices
-    lateinit var infoTextView: TextView
-    lateinit var weatherImage: ImageView
-    lateinit var tempTextView: TextView
-    lateinit var precipitationTextView: TextView
-    lateinit var precipitationTextView2: TextView
-    lateinit var precipitationTextView3: TextView
-    lateinit var feelsTextView: TextView
+    private lateinit var service: RetrofitServices
+    private lateinit var infoTextView: TextView
+    private lateinit var weatherImage: ImageView
+    private lateinit var tempTextView: TextView
+    private lateinit var precipitationTextView: TextView
+    private lateinit var precipitationTextView2: TextView
+    private lateinit var precipitationTextView3: TextView
+    private lateinit var feelsTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,13 +68,14 @@ class MainActivity : AppCompatActivity() {
                 println("success")
                 val weather = response.body()
 
-                val drawable: Drawable = resources.getDrawable(resources.getIdentifier(weather?.current?.weather?.get(0)?.weatherImage(), "drawable", packageName))
-                weatherImage.setImageDrawable(drawable)
+                weather?.current?.weather?.get(0)?.weatherImage()?.let {
+                    weatherImage.setImageDrawable(ContextCompat.getDrawable(applicationContext, it))
+                }
 
                 tempTextView.text = weather?.current?.getTemperature(weather.current.temp).toString() + "°"
                 precipitationTextView.text = weather?.current?.weather?.get(0)?.description
-                precipitationTextView3.text = weather?.current?.notCensureDescription()?.description
-                weather?.current?.notCensureDescription()?.color?.let { precipitationTextView3.setTextColor(it) }
+                precipitationTextView3.text = weather?.current?.notCensureDescription?.description
+                weather?.current?.notCensureDescription?.color?.let { precipitationTextView3.setTextColor(it) }
                 feelsTextView.text = "Ощущается как " + weather?.current?.getTemperature(weather.current.feelsLike).toString()
             }
         })

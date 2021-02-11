@@ -1,12 +1,10 @@
 package com.extended.rweather.models.one_call
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.util.Range
+import com.extended.rweather.R
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.*
 import java.util.*
 
 data class NonCensureDescription(val description: String, val color: Int)
@@ -25,11 +23,8 @@ fun state(): DayTime {
         }
 }
 
-enum class DayTime {
-        morning, noon, afternoon, evening, night
-}
+enum class DayTime { morning, noon, afternoon, evening, night }
 
-@Serializable
 data class OneCallModel(
         val lat: Double,
         val lon: Double,
@@ -43,7 +38,6 @@ data class OneCallModel(
         val daily: List<Daily>
 )
 
-@Serializable
 data class Current(
         val dt: Long,
         val sunrise: Long? = null,
@@ -70,81 +64,75 @@ data class Current(
 ) {
         fun getTemperature(doubleTemp: Double): Int { return (doubleTemp - 273.15).toInt() }
 
-        fun notCensureDescription(): NonCensureDescription {
-                if (Range(-100, -25).contains(getTemperature(feelsLike))) {
-                        return NonCensureDescription("Ебучая морозилка", Color.parseColor("#0D9DE3"))
-                } else if (Range(-25, -10).contains(getTemperature(feelsLike))) {
-                        return NonCensureDescription("Холодно пиздец", Color.parseColor("#0D9DE3"))
-                } else if (Range(-10, 0).contains(getTemperature(feelsLike))) {
-                        return NonCensureDescription("Немного морозит", Color.parseColor("#6ac6f9"))
-                } else if (Range(0, 15).contains(getTemperature(feelsLike))) {
-                        return NonCensureDescription("Заебись прохладно", Color.parseColor("#6ac6f9"))
-                } else if (Range(15, 25).contains(getTemperature(feelsLike))) {
-                        return NonCensureDescription("Заебись тепло", Color.parseColor("#9ACD32"))
-                } else if (Range(25, 40).contains(getTemperature(feelsLike))) {
-                        return NonCensureDescription("Жарко пиздеца", Color.parseColor("#ffb748"))
-                } else if (Range(40, 100).contains(getTemperature(feelsLike))) {
-                        return NonCensureDescription("Пекло ебучее", Color.parseColor("#f0341f"))
-                } else {
-                        return NonCensureDescription("Хуй знает что щас", Color.parseColor("#0D9DE3"))
+        val notCensureDescription: NonCensureDescription get() {
+                when {
+                    Range(-100, -35).contains(getTemperature(feelsLike)) -> {
+                            return NonCensureDescription("Ебучая морозилка", Color.parseColor("#0D9DE3"))
+                    }
+                    Range(-35, -20).contains(getTemperature(feelsLike)) -> {
+                            return NonCensureDescription("Холодно пиздец", Color.parseColor("#0D9DE3"))
+                    }
+                    Range(-20, -5).contains(getTemperature(feelsLike)) -> {
+                            return NonCensureDescription("Немного морозит", Color.parseColor("#6ac6f9"))
+                    }
+                    Range(-5, 15).contains(getTemperature(feelsLike)) -> {
+                            return NonCensureDescription("Заебись прохладно", Color.parseColor("#6ac6f9"))
+                    }
+                    Range(15, 25).contains(getTemperature(feelsLike)) -> {
+                            return NonCensureDescription("Заебись тепло", Color.parseColor("#9ACD32"))
+                    }
+                    Range(25, 40).contains(getTemperature(feelsLike)) -> {
+                            return NonCensureDescription("Жарко пиздеца", Color.parseColor("#ffb748"))
+                    }
+                    Range(40, 100).contains(getTemperature(feelsLike)) -> {
+                            return NonCensureDescription("Пекло ебучее", Color.parseColor("#f0341f"))
+                    }
+                    else -> {
+                            return NonCensureDescription("Хуй знает что щас", Color.parseColor("#0D9DE3"))
+                    }
                 }
         }
 }
 
-@Serializable
 data class WeatherElement(
         val id: Long,
         val main: String,
         val description: String,
         val icon: String
 ) {
-        fun weatherImage(): String {
+        fun weatherImage(): Int {
                 when (main) {
                         "Clouds" -> {
-                                if (description.contains("пасмурно")) {
-                                        return "nt_cloudy"
-                                } else if (description.contains("облачно с прояснениями")) {
-                                        return "partlysunny"
-                                } else {
-                                        return "partlycloudy"
+                                return when {
+                                        description.contains("пасмурно") -> { R.drawable.nt_cloudy }
+                                        description.contains("облачно с прояснениями") -> { R.drawable.partlysunny }
+                                        else -> { R.drawable.partlycloudy }
                                 }
                         }
                         "Snow" -> {
-                                if (description.contains("небольшой снег")) {
-                                        return "nt_chancesnow"
-                                } else {
-                                        return "snow"
-                                }
+                                return if (description.contains("небольшой снег")) { R.drawable.nt_chancesnow }
+                                else { R.drawable.snow }
                         }
                         "Clear" -> {
-                                if (state() == DayTime.night) {
-                                        return "nt_clear"
-                                } else {
-                                        return "clear"
-                                }
+                                return if (state() == DayTime.night) { R.drawable.nt_clear }
+                                else { R.drawable.clear }
                         }
                         "Mist" -> {
-                                if (state() == DayTime.night) {
-                                        return "nt_fog"
-                                } else {
-                                        return "fog"
-                                }
+                                return if (state() == DayTime.night) { R.drawable.nt_fog }
+                                else { R.drawable.fog }
                         }
                         "Rain" -> {
-                                if (description.contains("небольшой дождь")) {
-                                        return "nt_chancerain"
-                                } else if (description.contains("снег с дождём")) {
-                                        return "sleet"
-                                } else {
-                                        return "rain"
+                                return when {
+                                    description.contains("небольшой дождь") -> { R.drawable.nt_chancerain }
+                                    description.contains("снег с дождём") -> { R.drawable.sleet }
+                                    else -> { R.drawable.rain }
                                 }
                         }
-                        else -> { return "unknown" }
+                        else -> { return R.drawable.unknown }
                 }
         }
 }
 
-@Serializable
 data class Daily(
         val dt: Long,
         val sunrise: Long,
@@ -170,7 +158,6 @@ data class Daily(
         val snow: Double? = null
 )
 
-@Serializable
 data class FeelsLike(
         val day: Double,
         val night: Double,
@@ -178,7 +165,6 @@ data class FeelsLike(
         val morn: Double
 ) { fun getTemperature(doubleTemp: Double): Int { return (doubleTemp - 273.15).toInt() } }
 
-@Serializable
 data class Temp(
         val day: Double,
         val min: Double,
@@ -188,7 +174,6 @@ data class Temp(
         val morn: Double
 ) { fun getTemperature(doubleTemp: Double): Int { return (doubleTemp - 273.15).toInt() } }
 
-@Serializable
 data class Minutely(
         val dt: Double,
         val precipitation: Double

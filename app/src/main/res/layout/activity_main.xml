@@ -44,8 +44,7 @@
             <ImageView
                 android:id="@+id/weather_image"
                 android:layout_width="56dp"
-                android:layout_height="56dp"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:layout_height="56dp" />
 
             <TextView
                 android:id="@+id/temp_text_view"

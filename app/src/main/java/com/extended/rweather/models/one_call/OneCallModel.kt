@@ -9,6 +9,7 @@ import java.util.*
 
 data class NonCensureDescription(val description: String, val color: Int)
 
+// Тут все модели
 @SuppressLint("SimpleDateFormat")
 fun state(): DayTime {
         val calendar = Calendar.getInstance()

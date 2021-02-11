@@ -9,21 +9,21 @@ data class Weather (
     val weather: List<WeatherElement>,
     val base: String,
     val main: Main,
-    val visibility: Long,
+    val visibility: Double,
     val wind: Wind,
     val snow: Snow,
     val clouds: Clouds,
-    val dt: Long,
+    val dt: Double,
     val sys: Sys,
-    val timezone: Long,
-    val id: Long,
+    val timezone: Double,
+    val id: Double,
     val name: String,
-    val cod: Long
+    val cod: Double
 )
 
 @Serializable
 data class Clouds (
-    val all: Long
+    val all: Double
 )
 
 @Serializable
@@ -42,8 +42,8 @@ data class Main (
 
     @SerializedName("temp_max") val tempMax: Double,
 
-    val pressure: Long,
-    val humidity: Long
+    val pressure: Double,
+    val humidity: Double
 ) { fun getTemperature(doubleTemp: Double): Int { return (doubleTemp - 273.15).toInt() } }
 
 @Serializable
@@ -53,15 +53,15 @@ data class Snow (
 
 @Serializable
 data class Sys (
-    val type: Long,
-    val id: Long,
+    val type: Double,
+    val id: Double,
     val country: String,
-    val sunrise: Long,
-    val sunset: Long
+    val sunrise: Double,
+    val sunset: Double
 )
 
 @Serializable
 data class Wind (
-    val speed: Long,
-    val deg: Long
+    val speed: Double,
+    val deg: Double
 )

@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 tempTextView.text = weather.current.getTemperature(weather.current.temp).toString() + "°"
-                precipitationTextView.text = weather.current.weather[0].description.capitalizeFirstLetter()
+                precipitationTextView.text = weather.current.weather[0].description.capitalizeFirstLetter
                 precipitationTextView3.text = weather.current.notCensureDescription.description
                 weather.current.notCensureDescription.color.let {
                     precipitationTextView3.setTextColor(it)
@@ -171,13 +171,13 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // Показать нижний снэк
+    // Функция - расширение. Показавает нижний снэк
     fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
         Snackbar.make(this, message, duration).show()
     }
 
     // Функция - расширение. Заменяет первый символ строки на большой ("в" на "В")
-    fun String.capitalizeFirstLetter(): String {
+    val String.capitalizeFirstLetter: String get() {
         return replaceFirst(this[0], this[0].toUpperCase())
     }
 }

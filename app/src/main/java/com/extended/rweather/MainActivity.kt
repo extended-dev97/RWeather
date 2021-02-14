@@ -58,6 +58,8 @@ class MainActivity : AppCompatActivity() {
         precipitationTextView3 = findViewById(R.id.precipitation_text_view_3)
         feelsTextView = findViewById(R.id.feels_text_view)
 
+        enablePlaceholder()
+
         // Инициализация сервиса
         service = Common.retrofitService
 
@@ -116,9 +118,15 @@ class MainActivity : AppCompatActivity() {
             getWeather(lat = location.latitude, lon = location.longitude)
             getOneCall(lat = location.latitude, lon = location.longitude)
         }
-        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-        override fun onProviderEnabled(provider: String) {}
-        override fun onProviderDisabled(provider: String) {}
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
+            println(status)
+        }
+        override fun onProviderEnabled(provider: String) {
+            println("$provider enabled")
+        }
+        override fun onProviderDisabled(provider: String) {
+            println("$provider disabled")
+        }
     }
 
     // Запрос погоды (чисто для названия местности)
@@ -150,12 +158,15 @@ class MainActivity : AppCompatActivity() {
                 println("success")
                 val weather: OneCallModel = response.body() ?: return
 
+                disablePlaceholder()
+
                 weather.current.weather[0].weatherImage().let {
                     weatherImage.setImageDrawable(ContextCompat.getDrawable(applicationContext, it))
                 }
 
                 tempTextView.text = weather.current.getTemperature(weather.current.temp).toString() + "°"
                 precipitationTextView.text = weather.current.weather[0].description.capitalizeFirstLetter
+                precipitationTextView2.setText(R.string.interpunkt)
                 precipitationTextView3.text = weather.current.notCensureDescription.description
                 weather.current.notCensureDescription.color.let {
                     precipitationTextView3.setTextColor(it)
@@ -169,6 +180,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun enablePlaceholder() {
+        infoTextView.setBackgroundResource(R.drawable.placeholder)
+        tempTextView.setBackgroundResource(R.drawable.placeholder)
+        precipitationTextView.setBackgroundResource(R.drawable.placeholder)
+        precipitationTextView2.setBackgroundResource(R.drawable.placeholder)
+        precipitationTextView3.setBackgroundResource(R.drawable.placeholder)
+        feelsTextView.setBackgroundResource(R.drawable.placeholder)
+        weatherImage.setBackgroundResource(R.drawable.placeholder)
+    }
+
+    private fun disablePlaceholder() {
+        infoTextView.setBackgroundResource(0)
+        tempTextView.setBackgroundResource(0)
+        precipitationTextView.setBackgroundResource(0)
+        precipitationTextView2.setBackgroundResource(0)
+        precipitationTextView3.setBackgroundResource(0)
+        feelsTextView.setBackgroundResource(0)
+        weatherImage.setBackgroundResource(0)
     }
 
     // Функция - расширение. Показавает нижний снэк
